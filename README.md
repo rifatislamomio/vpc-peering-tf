@@ -1,6 +1,6 @@
 ## AWS VPC peering with Terraform
 
-TODO:
+_TODO:_
 - [x] Initial project files
 - [x] Primary implementations
 - [ ] Organize and modularize
