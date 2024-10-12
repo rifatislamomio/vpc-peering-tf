@@ -5,8 +5,21 @@ resource "aws_vpc" "service_vpc" {
   }
 }
 
+module "service_vpc" {
+  source             = "./vpc"
+  vpc_name           = "service_vpc"
+  vpc_cidr           = "10.0.0.0/16"
+  availability_zones = ["ap-southeast-1a"]
+  public_subnets     = ["10.0.1.0/24"]
+  custom_tags = {
+    env           = "dev"
+    managed_by_tf = true
+    workspace     = "dev-workspace"
+  }
+}
+
 resource "aws_subnet" "service_public_subnet" {
-  vpc_id            = aws_vpc.service_vpc.id
+  vpc_id            = module.service_vpc.vpc_id
   cidr_block        = "10.0.1.0/24"
   availability_zone = "ap-southeast-1a"
   depends_on        = [aws_vpc.service_vpc]
@@ -52,6 +65,7 @@ resource "aws_subnet" "db_pvt_subnet" {
   vpc_id            = aws_vpc.db_vpc.id
   cidr_block        = "20.0.1.0/24"
   availability_zone = "ap-southeast-1a"
+  depends_on        = [aws_vpc.db_vpc]
   tags = {
     Name = "db-pvt-subnet"
   }
